@@ -5,6 +5,7 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import { ReactElement, ReactNode } from 'react';
 import { NextPage } from 'next';
 import { Poppins } from '@next/font/google';
+import { KindeProvider } from '@kinde-oss/kinde-auth-nextjs';
 config.autoAddCss = false;
 
 const font = Poppins({
@@ -24,9 +25,11 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
   return getLayout(
     <>
-      <main className={font.className}>
-        <Component {...pageProps} />
-      </main>
+      <KindeProvider>
+        <main className={font.className}>
+          <Component {...pageProps} />
+        </main>
+      </KindeProvider>
     </>
   );
 }

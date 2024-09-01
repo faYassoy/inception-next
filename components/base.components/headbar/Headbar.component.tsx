@@ -12,6 +12,7 @@ import { HeadbarProps } from './headbar.props';
 import { token_cookie_name } from '../../../helpers';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 export function HeadbarComponent({ children, onMenuClick }: HeadbarProps) {
   const router = useRouter();
@@ -89,16 +90,13 @@ export function HeadbarComponent({ children, onMenuClick }: HeadbarProps) {
                 Edit Profile
               </label>
             </div> */}
-            <div
+            <Link
+              href="/api/auth/logout"
               className="px-8 py-4 flex gap-5 hover:bg-light-danger hover:shadow-md cursor-pointer text-danger"
-              onClick={() => {
-                Cookies.remove(token_cookie_name);
-                router.push('/');
-              }}
             >
               <FontAwesomeIcon icon={faPowerOff} />
               <label className="cursor-pointer font-semibold">Sign Out</label>
-            </div>
+            </Link>
           </div>
         </div>
       </OutsideClickHandler>

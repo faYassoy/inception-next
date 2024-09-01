@@ -10,3 +10,4 @@ export * from './input-time.props';
 export * from './input.props';
 export * from './radio.props';
 export * from './select.props';
+export * from './textarea.props';

@@ -10,6 +10,7 @@ import {
   inputRadioProps,
   inputTimeProps,
   selectProps,
+  textaeraProps,
 } from '../input';
 import { validationRules } from '../../../helpers';
 
@@ -24,6 +25,7 @@ export type formProps = {
     | inputCheckboxProps
     | inputFileProps
     | inputImageProps
+    | textaeraProps
     | inputMapProps;
   col?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
   type?:
@@ -38,6 +40,7 @@ export type formProps = {
     | 'file'
     | 'image'
     | 'map'
+    | 'textarea'
     | 'custom';
   custom?: ({
     formControl,

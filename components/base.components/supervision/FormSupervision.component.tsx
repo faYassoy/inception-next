@@ -28,10 +28,12 @@ import {
   inputTimeProps,
   SelectComponent,
   selectProps,
+  textaeraProps,
 } from '../input';
 import InputImageComponent from '../input/InputImage.component';
 import { ModalConfirmComponent } from '../modal';
 import { formSupervisionProps } from './form-supervision.props';
+import { TextareaComponent } from '../input/Textarea.component';
 
 export function FormSupervisionComponent({
   title,
@@ -175,6 +177,11 @@ export function FormSupervisionComponent({
                   ) : inputType == 'check' ? (
                     <InputCheckboxComponent
                       {...(form.construction as inputCheckboxProps)}
+                      {...formControl(form.construction?.name || 'input_name')}
+                    />
+                  ) : inputType == 'textarea' ? (
+                    <TextareaComponent
+                      {...(form.construction as textaeraProps)}
                       {...formControl(form.construction?.name || 'input_name')}
                     />
                   ) : inputType == 'radio' ? (
