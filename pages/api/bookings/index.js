@@ -29,7 +29,7 @@ export default async function handler(req, res) {
         skip: (parseInt(page) - 1) * parseInt(paginate),
         take: parseInt(paginate),
         where: whereClause,
-        orderBy: { eventDate: 'asc' },
+        orderBy: { createdAt: 'desc' },
       });
 
       res.status(200).json({
@@ -54,6 +54,7 @@ export default async function handler(req, res) {
       detail,
       style,
       prefix,
+      validNumber,
     } = req.body;
 
     try {
@@ -69,6 +70,12 @@ export default async function handler(req, res) {
           massage: `Previous booking from ${
             prefix + phoneNumber
           } still on progres`,
+          errors: { phoneNumber: ['Use diffrent phone Number'] },
+        });
+      }
+      if (!validNumber) {
+        return res.status(422).json({
+          massage: `${prefix + phoneNumber} not Valid number`,
           errors: { phoneNumber: ['Use diffrent phone Number'] },
         });
       }

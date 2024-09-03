@@ -5,17 +5,17 @@ function SevicesListComponent() {
   const router = useRouter();
   const services = [
     {
-      slug: 'Wedding-Photography',
+      slug: 'wedding-photography',
       name: 'Wedding Photography',
       desc: ' Capture the beauty of your special day with our professional wedding photography services.',
     },
     {
-      slug: 'Corporate-Videos',
+      slug: 'corporate-videos',
       name: 'Corporate Videos',
       desc: 'Showcase your business with high-quality corporate videos that make an impact.',
     },
     {
-      slug: 'Event-Coverage',
+      slug: 'event-coverage',
       name: 'Event Coverage',
       desc: 'Document your events with comprehensive photography and videography services.',
     },
@@ -30,7 +30,7 @@ function SevicesListComponent() {
             onClick={() =>
               router.replace(
                 {
-                  query: service.slug,
+                  query: { style: service.slug },
                 },
                 undefined,
                 { shallow: true }

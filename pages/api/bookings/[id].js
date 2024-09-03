@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     } catch (error) {
       res.status(500).json({ error: 'Failed to fetch booking' });
     }
-  } else if (req.method === 'PUT') {
+  } else if (req.method === 'POST') {
     // Update an existing booking
     const {
       name,
@@ -27,8 +27,11 @@ export default async function handler(req, res) {
       eventStyle,
       details,
       status,
+      _method,
     } = req.body;
-
+    if (_method != 'PUT') {
+      res.status(405).json({ message: 'Method Not Allowed' });
+    }
     try {
       const updatedBooking = await prisma.booking.update({
         where: { id: parseInt(id) },

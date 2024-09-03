@@ -3,19 +3,26 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import {
+  ButtonComponent,
   DateFormatComponent,
   TableSupervisionComponent,
 } from '../../components/base.components';
 import { AdminLayout } from './Admin.layout';
-export function noS(str) {
-  return str.replace(/\s/g, '%20');
-}
+import PhoneValidateComponent from '../../components/construct.components/PhoneValidate.component';
+import moment from 'moment';
+import 'moment/locale/id';
+import { post } from '../../helpers';
 function DaftarBooking() {
   const { isAuthenticated, isLoading } = useKindeAuth();
   const styleOptions = [
-    { label: 'style1', value: 'style1' },
-    { label: 'style2', value: 'style2' },
-    { label: 'style3', value: 'style3' },
+    { label: 'Wedding Photography', value: 'wedding-photography' },
+    { label: 'Corporate Videos', value: 'corporate-videos' },
+    { label: 'Event Coverage', value: 'event-coverage' },
+  ];
+  const statusOptions = [
+    { label: 'proceed', value: 'proceed' },
+    { label: 'aproved', value: 'aproved' },
+    { label: 'done', value: 'done' },
   ];
   return !isLoading && isAuthenticated ? (
     <>
@@ -60,7 +67,11 @@ function DaftarBooking() {
               item: ({ status }) => (
                 <p
                   className={` text-sm font-semibold ${
-                    status == 'done' ? 'text-lime-500' : 'text-yellow-500'
+                    status == 'done'
+                      ? 'text-lime-500'
+                      : status == 'aproved'
+                      ? 'text-yellow-500'
+                      : 'text-slate-500'
                   }`}
                 >
                   {status}
@@ -84,6 +95,7 @@ function DaftarBooking() {
         }}
         formControl={{
           customDefaultValue: { prefix: '62' },
+          size: 'lg',
           custom: [
             {
               type: 'date',
@@ -129,29 +141,17 @@ function DaftarBooking() {
               },
             },
             {
-              col: 2,
-              type: 'select',
-              construction: {
-                name: 'prefix',
-                label: 'Kode Negara',
-                placeholder: '',
-                options: [{ label: 'idn (+62)', value: '62' }],
-                validations: {
-                  required: true,
-                },
-              },
-            },
-            {
-              col: 4,
-              construction: {
-                type: 'phone',
-                name: 'phoneNumber',
-                label: 'No. Hp',
-                placeholder: 'ex: 81216174849',
-                validations: {
-                  required: true,
-                  min: 10,
-                },
+              col: 6,
+              type: 'custom',
+              custom: ({ values, setValues, errors, setErrors }) => {
+                return (
+                  <PhoneValidateComponent
+                    values={values}
+                    setValues={setValues}
+                    errors={errors}
+                    setErrors={setErrors}
+                  />
+                );
               },
             },
             {
@@ -175,6 +175,7 @@ function DaftarBooking() {
                 placeholder: 'detail acara...',
                 rows: 4,
                 validations: {
+                  required: true,
                   min: 10,
                 },
               },
@@ -182,9 +183,24 @@ function DaftarBooking() {
           ],
         }}
         customDetail={(data) => {
-          const message = `${data.name}, Kamu telah melakukan booking di inception studio, dengan detail sebagai berikut:\n\n acara: ${data.eventName},\n style: ${data.style},\n pelaksanaan: ${data.eventDate},\n detail: ${data.detail}\n\nMimin mau konfirmasi nih apakah detail booking sudah sesuai atau belum.\n\nTerima kasih..`;
+          const formatedDate = moment(data?.eventDate)
+            .locale('id')
+            .format('dddd, DD MMMM YYYY');
+          // console.log(formatedDate);
+          const message = `*${data.name}*, Kamu telah melakukan booking di inception studio, dengan detail sebagai berikut:\n\n acara: ${data.eventName},\n style: ${data.style},\n pelaksanaan: ${formatedDate}\n\nMimin mau konfirmasi nih apakah detail booking sudah sesuai atau belum.\n\nTerima kasih..`;
 
           const encodedMessage = encodeURIComponent(message);
+          async function snedWaConfirm(chatId) {
+            const response = await post({
+              url: 'http://localhost:3000/api/sendText',
+              contentType: 'application/json',
+              body: {
+                chatId,
+                text: message,
+                session: 'default',
+              },
+            });
+          }
           return (
             <div className="flex flex-col px-8 py-4">
               <ul className="space-y-2">
@@ -241,6 +257,13 @@ function DaftarBooking() {
                   ></div>
                 </li>
               </ul>
+              <div className="w-full flex justify-center mt-10">
+                <ButtonComponent
+                  label="Konfirmasi Booking"
+                  paint="success"
+                  onClick={() => snedWaConfirm(data.phoneNumber)}
+                />
+              </div>
             </div>
           );
         }}
@@ -255,8 +278,91 @@ function DaftarBooking() {
               style: data?.style,
               detail: data?.detail,
               publish_at: data?.publish_at,
+              status: data?.status,
             };
           },
+          custom: [
+            {
+              type: 'date',
+              construction: {
+                name: 'eventDate',
+                label: 'Pelaksanaan',
+                placeholder: 'Pilih Tanggal Pelaksanaan...',
+                validations: {
+                  required: true,
+                },
+              },
+            },
+            {
+              type: 'select',
+              construction: {
+                name: 'status',
+                label: 'Status',
+                placeholder: 'Pilih Style...',
+                options: statusOptions,
+                validations: {
+                  required: true,
+                },
+              },
+            },
+            {
+              construction: {
+                name: 'eventName',
+                label: 'Nama Event',
+                placeholder: 'Masukkan event...',
+                validations: {
+                  required: true,
+                },
+              },
+            },
+            {
+              type: 'select',
+              construction: {
+                name: 'style',
+                label: 'Style',
+                placeholder: 'Pilih Style...',
+                options: styleOptions,
+                validations: {
+                  required: true,
+                },
+              },
+            },
+            {
+              construction: {
+                name: 'name',
+                label: 'Nama Pemesan',
+                placeholder: 'Masukkan nama pemesan...',
+                validations: {
+                  required: true,
+                },
+              },
+            },
+            {
+              construction: {
+                type: 'email',
+                name: 'email',
+                label: 'Email',
+                placeholder: 'ex: livia@gmail.com',
+                validations: {
+                  required: true,
+                  email: true,
+                },
+              },
+            },
+            {
+              type: 'textarea',
+              construction: {
+                name: 'detail',
+                label: 'Detail',
+                placeholder: 'detail acara...',
+                rows: 4,
+                validations: {
+                  required: true,
+                  min: 10,
+                },
+              },
+            },
+          ],
         }}
       />
     </>

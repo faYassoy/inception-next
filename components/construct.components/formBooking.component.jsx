@@ -1,19 +1,22 @@
-'use server';
-import React from 'react';
-import { FormSupervisionComponent } from '../base.components';
-// import { prefix } from '@fortawesome/free-solid-svg-icons';
+import { ButtonComponent, FormSupervisionComponent } from '../base.components';
+import PhoneValidateComponent from './PhoneValidate.component';
+import { useRouter } from 'next/router';
 
 function FormBookingComponent() {
+  const route = useRouter();
+  const { style } = route.query;
+
   const styleOptions = [
-    { label: 'style1', value: 'style1' },
-    { label: 'style2', value: 'style2' },
-    { label: 'style3', value: 'style3' },
+    { label: 'Wedding Photography', value: 'wedding-photography' },
+    { label: 'Corporate Videos', value: 'corporate-videos' },
+    { label: 'Event Coverage', value: 'event-coverage' },
   ];
   return (
-    <>
+    <div className="h-[500px]">
       <FormSupervisionComponent
         submitControl={{ path: 'bookings' }}
-        defaultValue={{ prefix: '62' }}
+        defaultValue={{ prefix: '62', style: style || '' }}
+        onSuccess={() => route.push('/')}
         confirmation={true}
         forms={[
           {
@@ -59,30 +62,31 @@ function FormBookingComponent() {
               },
             },
           },
+          // {
+          //   col: 2,
+          //   type: 'select',
+          //   construction: {
+          //     name: 'prefix',
+          //     label: 'Kode Negara',
+          //     placeholder: '',
+          //     options: [{ label: 'idn (+62)', value: '62' }],
+          //     validations: {
+          //       required: true,
+          //     },
+          //   },
+          // },
           {
-            col: 2,
-            type: 'select',
-            construction: {
-              name: 'prefix',
-              label: 'Kode Negara',
-              placeholder: '',
-              options: [{ label: 'idn (+62)', value: '62' }],
-              validations: {
-                required: true,
-              },
-            },
-          },
-          {
-            col: 4,
-            construction: {
-              type: 'phone',
-              name: 'phoneNumber',
-              label: 'No. Hp',
-              placeholder: 'ex: 81216174849',
-              validations: {
-                required: true,
-                min: 10,
-              },
+            col: 6,
+            type: 'custom',
+            custom: ({ values, setValues, errors, setErrors }) => {
+              return (
+                <PhoneValidateComponent
+                  values={values}
+                  setValues={setValues}
+                  errors={errors}
+                  setErrors={setErrors}
+                />
+              );
             },
           },
           {
@@ -111,8 +115,20 @@ function FormBookingComponent() {
             },
           },
         ]}
+        customActionBar={
+          <div className="flex justify-end mt-4">
+            <ButtonComponent
+              type="submit"
+              label="Booking"
+              size="lg"
+              block
+              // icon={faSave}
+              // loading={loading}
+            />
+          </div>
+        }
       />
-    </>
+    </div>
   );
 }
 
