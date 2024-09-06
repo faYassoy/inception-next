@@ -22,7 +22,7 @@ function FormBookingComponent() {
           {
             type: 'date',
             construction: {
-              name: 'eventDate',
+              name: 'event_date',
               label: 'Pelaksanaan',
               placeholder: 'Pilih Tanggal Pelaksanaan...',
               validations: {
@@ -32,7 +32,7 @@ function FormBookingComponent() {
           },
           {
             construction: {
-              name: 'eventName',
+              name: 'event_name',
               label: 'Nama Event',
               placeholder: 'Masukkan event...',
               validations: {

@@ -15,8 +15,8 @@ export default async function handler(req, res) {
         whereClause.OR = [
           { name: { contains: search, mode: 'insensitive' } },
           { email: { contains: search, mode: 'insensitive' } },
-          { phoneNumber: { contains: search, mode: 'insensitive' } },
-          { eventName: { contains: search, mode: 'insensitive' } },
+          { phone_number: { contains: search, mode: 'insensitive' } },
+          { event_name: { contains: search, mode: 'insensitive' } },
         ];
       }
 
@@ -48,9 +48,9 @@ export default async function handler(req, res) {
     const {
       name,
       email,
-      phoneNumber,
-      eventName,
-      eventDate,
+      phone_number,
+      event_name,
+      event_date,
       detail,
       style,
       prefix,
@@ -60,7 +60,7 @@ export default async function handler(req, res) {
     try {
       const existingBooking = await prisma.booking.findFirst({
         where: {
-          phoneNumber: prefix + phoneNumber,
+          phone_number: prefix + phone_number,
           status: { not: 'done' },
         },
       });
@@ -68,15 +68,15 @@ export default async function handler(req, res) {
       if (existingBooking) {
         return res.status(422).json({
           massage: `Previous booking from ${
-            prefix + phoneNumber
+            prefix + phone_number
           } still on progres`,
-          errors: { phoneNumber: ['Use diffrent phone Number'] },
+          errors: { phone_number: ['Use diffrent phone Number'] },
         });
       }
       if (!validNumber) {
         return res.status(422).json({
-          massage: `${prefix + phoneNumber} not Valid number`,
-          errors: { phoneNumber: ['Use diffrent phone Number'] },
+          massage: `${prefix + phone_number} not Valid number`,
+          errors: { phone_number: ['Use diffrent phone Number'] },
         });
       }
 
@@ -84,9 +84,9 @@ export default async function handler(req, res) {
         data: {
           name,
           email,
-          phoneNumber: prefix + phoneNumber,
-          eventName,
-          eventDate: new Date(eventDate),
+          phone_number: prefix + phone_number,
+          event_name,
+          event_date: new Date(event_date),
           detail,
           style,
           status: 'proceed', // Default status

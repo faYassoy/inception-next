@@ -35,20 +35,20 @@ function PhoneValidateComponent({ values, setValues, errors, setErrors }) {
       if (pingResponse?.data?.numberExists) {
         setValues([
           ...values?.filter(
-            (val) => !['phoneNumber', 'validNumber'].includes(val.name)
+            (val) => !['phone_number', 'validNumber'].includes(val.name)
           ),
-          { name: 'phoneNumber', value: inputPhone },
+          { name: 'phone_number', value: inputPhone },
           { name: 'validNumber', value: 1 },
         ]);
 
         setErrors([
-          ...errors?.filter((val) => !['phoneNumber'].includes(val.name)),
+          ...errors?.filter((val) => !['phone_number'].includes(val.name)),
         ]);
         setActiveNumber(true);
       } else {
         setErrors([
-          ...errors?.filter((val) => !['phoneNumber'].includes(val.name)),
-          { name: 'phoneNumber', error: 'nomor WhatsApp tidak ada' },
+          ...errors?.filter((val) => !['phone_number'].includes(val.name)),
+          { name: 'phone_number', error: 'nomor WhatsApp tidak ada' },
         ]);
 
         setValues([
@@ -63,7 +63,7 @@ function PhoneValidateComponent({ values, setValues, errors, setErrors }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkValidate]);
 
-  //   console.log(values.find((val) => val.name == 'phoneNumber')?.value);
+  //   console.log(values.find((val) => val.name == 'phone_number')?.value);
   return (
     <>
       <div className="grid grid-cols-6 gap-3">
@@ -86,18 +86,18 @@ function PhoneValidateComponent({ values, setValues, errors, setErrors }) {
         <div className="col-span-4">
           <InputComponent
             type="phone"
-            name="phoneNumber"
+            name="phone_number"
             label={loadingValidate ? 'No. Hp (cek nomor...)' : 'No. Hp'}
             placeholder="Ex:895396025318"
             validations={{ required: true }}
             onChange={(e) => {
               setInputPhone(e);
             }}
-            value={values.find((val) => val.name == 'phoneNumber')?.value}
-            error={errors.find((val) => val.name == 'phoneNumber')?.error}
+            value={values.find((val) => val.name == 'phone_number')?.value}
+            error={errors.find((val) => val.name == 'phone_number')?.error}
           />
           <small className="h-4 text-green-600">
-            {!errors.find((val) => val.name == 'phoneNumber')?.error &&
+            {!errors.find((val) => val.name == 'phone_number')?.error &&
               activeNumber &&
               'nomor WhatsApp ditemukan'}
           </small>
