@@ -12,7 +12,7 @@ function FormBookingComponent() {
     { label: 'Event Coverage', value: 'event-coverage' },
   ];
   return (
-    <div className="h-[500px]">
+    <div className="min-h-[500px]">
       <FormSupervisionComponent
         submitControl={{ path: 'bookings' }}
         defaultValue={{ prefix: '62', style: style || '' }}
@@ -76,7 +76,6 @@ function FormBookingComponent() {
           //   },
           // },
           {
-            col: 6,
             type: 'custom',
             custom: ({ values, setValues, errors, setErrors }) => {
               return (
@@ -90,7 +89,6 @@ function FormBookingComponent() {
             },
           },
           {
-            col: 6,
             construction: {
               type: 'email',
               name: 'email',

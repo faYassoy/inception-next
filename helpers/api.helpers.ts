@@ -99,9 +99,9 @@ export const get = async ({
     .then((res) => res)
     .catch((err) => err.response);
 
-  if (fetch.status == 401) {
+  if (fetch?.status == 401) {
     Router.push(loginPath);
-  } else if (fetch.status == 403) {
+  } else if (fetch?.status == 403) {
     // Router.push(basePath);
   } else {
     return fetch;
@@ -234,9 +234,9 @@ export const post = async ({
     .then((res) => res)
     .catch((err) => err.response);
 
-  if (fetch.status == 401) {
+  if (fetch?.status == 401) {
     Router.push(loginPath);
-  } else if (fetch.status == 403) {
+  } else if (fetch?.status == 403) {
     // Router.push(basePath);
   } else {
     return fetch;
@@ -297,9 +297,9 @@ export const patch = async ({
     },
   });
 
-  if (fetch.status == 401) {
+  if (fetch?.status == 401) {
     Router.push(loginPath);
-  } else if (fetch.status == 403) {
+  } else if (fetch?.status == 403) {
     Router.push(basePath);
   } else {
     return fetch;
@@ -349,9 +349,9 @@ export const destroy = async ({
     },
   });
 
-  if (fetch.status == 401) {
+  if (fetch?.status == 401) {
     Router.push(loginPath);
-  } else if (fetch.status == 403) {
+  } else if (fetch?.status == 403) {
     Router.push(basePath);
   } else {
     return fetch;
@@ -410,9 +410,9 @@ export const download = async ({
     onDownloadProgress: onDownloadProgress,
   });
 
-  if (fetch.status == 401) {
+  if (fetch?.status == 401) {
     Router.push(loginPath);
-  } else if (fetch.status == 403) {
+  } else if (fetch?.status == 403) {
     Router.push(basePath);
   } else {
     fileDownload(fetch.data, fileName);

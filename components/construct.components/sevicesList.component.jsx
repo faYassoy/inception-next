@@ -19,6 +19,36 @@ function SevicesListComponent() {
       name: 'Event Coverage',
       desc: 'Document your events with comprehensive photography and videography services.',
     },
+    {
+      slug: 'wedding-photography',
+      name: 'Wedding Photography',
+      desc: ' Capture the beauty of your special day with our professional wedding photography services.',
+    },
+    {
+      slug: 'corporate-videos',
+      name: 'Corporate Videos',
+      desc: 'Showcase your business with high-quality corporate videos that make an impact.',
+    },
+    {
+      slug: 'event-coverage',
+      name: 'Event Coverage',
+      desc: 'Document your events with comprehensive photography and videography services.',
+    },
+    {
+      slug: 'wedding-photography',
+      name: 'Wedding Photography',
+      desc: ' Capture the beauty of your special day with our professional wedding photography services.',
+    },
+    {
+      slug: 'corporate-videos',
+      name: 'Corporate Videos',
+      desc: 'Showcase your business with high-quality corporate videos that make an impact.',
+    },
+    {
+      slug: 'event-coverage',
+      name: 'Event Coverage',
+      desc: 'Document your events with comprehensive photography and videography services.',
+    },
   ];
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

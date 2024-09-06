@@ -29,8 +29,7 @@ function PhoneValidateComponent({ values, setValues, errors, setErrors }) {
           prefix + inputPhone
         }&session=default`,
       });
-      if (pingResponse.status == 200) {
-        // console.log(pingResponse?.data?.numberExists);
+      if (pingResponse?.status == 200) {
         setLoadingValidate(false);
       }
       if (pingResponse?.data?.numberExists) {
