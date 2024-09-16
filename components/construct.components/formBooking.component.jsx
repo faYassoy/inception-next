@@ -14,7 +14,7 @@ function FormBookingComponent() {
   return (
     <div className="min-h-[500px]">
       <FormSupervisionComponent
-        submitControl={{ path: 'bookings' }}
+        submitControl={{ path: 'client-booking' }}
         defaultValue={{ prefix: '62', style: style || '' }}
         onSuccess={() => route.push('/')}
         confirmation={true}
@@ -109,6 +109,17 @@ function FormBookingComponent() {
               rows: 4,
               validations: {
                 min: 10,
+              },
+            },
+          },
+          {
+            col: 4,
+            construction: {
+              name: 'otp',
+              label: 'OTP',
+              placeholder: 'kode OTP...',
+              validations: {
+                required: true,
               },
             },
           },

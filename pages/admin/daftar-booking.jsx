@@ -39,19 +39,19 @@ function DaftarBooking() {
               label: 'Atas Nama',
               sortable: true,
               width: '200px',
-              item: ({ name, phoneNumber }) => (
+              item: ({ name, phone_number }) => (
                 <>
                   <p className="border-b-2 py-2">{name}</p>
-                  <p className="text-sm py-2">Kontak: {phoneNumber}</p>
+                  <p className="text-sm py-2">Kontak: {phone_number}</p>
                 </>
               ),
             },
             {
-              selector: 'eventName',
+              selector: 'event_name',
               label: 'Event',
               width: '300px',
-              item: ({ eventName }) => (
-                <p className="font-semibold">{eventName}</p>
+              item: ({ event_name }) => (
+                <p className="font-semibold">{event_name}</p>
               ),
             },
             {
@@ -79,13 +79,13 @@ function DaftarBooking() {
               ),
             },
             {
-              selector: 'eventDate',
+              selector: 'event_date',
               label: 'Pelaksanaan',
               width: '300px',
-              item: ({ eventDate }) => (
+              item: ({ event_date }) => (
                 <i className="">
                   <DateFormatComponent
-                    date={eventDate}
+                    date={event_date}
                     format="dddd, DD MMMM YYYY"
                   />
                 </i>
@@ -100,7 +100,7 @@ function DaftarBooking() {
             {
               type: 'date',
               construction: {
-                name: 'eventDate',
+                name: 'event_date',
                 label: 'Pelaksanaan',
                 placeholder: 'Pilih Tanggal Pelaksanaan...',
                 validations: {
@@ -110,7 +110,7 @@ function DaftarBooking() {
             },
             {
               construction: {
-                name: 'eventName',
+                name: 'event_name',
                 label: 'Nama Event',
                 placeholder: 'Masukkan event...',
                 validations: {
@@ -150,6 +150,7 @@ function DaftarBooking() {
                     setValues={setValues}
                     errors={errors}
                     setErrors={setErrors}
+                    isAdmin={true}
                   />
                 );
               },
@@ -183,11 +184,11 @@ function DaftarBooking() {
           ],
         }}
         customDetail={(data) => {
-          const formatedDate = moment(data?.eventDate)
+          const formatedDate = moment(data?.event_date)
             .locale('id')
             .format('dddd, DD MMMM YYYY');
           // console.log(formatedDate);
-          const message = `*${data.name}*, Kamu telah melakukan booking di inception studio, dengan detail sebagai berikut:\n\n acara: ${data.eventName},\n style: ${data.style},\n pelaksanaan: ${formatedDate}\n\nMimin mau konfirmasi nih apakah detail booking sudah sesuai atau belum.\n\nTerima kasih..`;
+          const message = `*${data.name}*, Kamu telah melakukan booking di inception studio, dengan detail sebagai berikut:\n\n acara: ${data.event_name},\n style: ${data.style},\n pelaksanaan: ${formatedDate}\n\nMimin mau konfirmasi nih apakah detail booking sudah sesuai atau belum.\n\nTerima kasih..`;
 
           const encodedMessage = encodeURIComponent(message);
           async function snedWaConfirm(chatId) {
@@ -218,7 +219,7 @@ function DaftarBooking() {
                       href={`https://wa.me/+6281216174849?text=${encodedMessage}`}
                       rel="noreferrer"
                     >
-                      {data?.phoneNumber}
+                      {data?.phone_number}
                     </a>
                   </div>
                 </li>
@@ -228,11 +229,11 @@ function DaftarBooking() {
                 </li>
                 <li className="grid grid-cols-12">
                   <b className="col-span-3">Acara</b>
-                  <div className="col-span-9">: {data?.eventName}</div>
+                  <div className="col-span-9">: {data?.event_name}</div>
                 </li>
                 <li className="grid grid-cols-12">
                   <b className="col-span-3">Pelaksanaan</b>
-                  <div className="col-span-9">: {data?.eventDate}</div>
+                  <div className="col-span-9">: {data?.event_date}</div>
                 </li>
                 <li className="grid grid-cols-12">
                   <b className="col-span-3">Status</b>
@@ -251,7 +252,7 @@ function DaftarBooking() {
                   <b className="block w-full pb-2">Detail : </b>
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: data?.detail.replace(/\n/g, '<br>'),
+                      __html: data?.detail?.replace(/\n/g, '<br>'),
                     }}
                     className="max-h-[30vh] overflow-y-scroll scroll_control px-3 py-4 bg-slate-100 rounded-lg"
                   ></div>
@@ -261,7 +262,7 @@ function DaftarBooking() {
                 <ButtonComponent
                   label="Konfirmasi Booking"
                   paint="success"
-                  onClick={() => snedWaConfirm(data.phoneNumber)}
+                  onClick={() => snedWaConfirm(data.phone_number)}
                 />
               </div>
             </div>
@@ -272,9 +273,9 @@ function DaftarBooking() {
             return {
               name: data?.name,
               email: data?.email,
-              phoneNumber: data?.phoneNumber,
-              eventName: data?.eventName,
-              eventDate: data?.eventDate,
+              phone_number: data?.phone_number,
+              event_name: data?.event_name,
+              event_date: data?.event_date,
               style: data?.style,
               detail: data?.detail,
               publish_at: data?.publish_at,
@@ -285,7 +286,7 @@ function DaftarBooking() {
             {
               type: 'date',
               construction: {
-                name: 'eventDate',
+                name: 'event_date',
                 label: 'Pelaksanaan',
                 placeholder: 'Pilih Tanggal Pelaksanaan...',
                 validations: {
@@ -307,7 +308,7 @@ function DaftarBooking() {
             },
             {
               construction: {
-                name: 'eventName',
+                name: 'event_name',
                 label: 'Nama Event',
                 placeholder: 'Masukkan event...',
                 validations: {

@@ -29,10 +29,19 @@ model Booking {
 model Review {
   id         String   @id @default(uuid())
   comment    String
+  is_visited Boolean @default(false)
   embed_type String?
   embed_link String?
   created_at DateTime @default(now())
 
   bookingId String  @unique
   booking   Booking @relation(fields: [bookingId], references: [id])
+}
+
+model Token {
+  id           Int      @id @default(autoincrement())
+  phone_number String   @unique
+  otp          String
+  is_valid     Boolean
+  createdAt    DateTime @default(now())
 }

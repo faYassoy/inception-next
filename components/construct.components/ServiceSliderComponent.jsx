@@ -3,6 +3,7 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 // import Autoplay from 'embla-carousel-autoplay';
 // import { PrevIcon, NextIcon } from './Icons'; // Assume you have icon components
 
@@ -10,7 +11,7 @@ const ServiceSliderComponent = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start' });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState([]);
-
+  const router = useRouter();
   const scrollPrev = useCallback(
     () => emblaApi && emblaApi.scrollPrev(),
     [emblaApi]
@@ -36,34 +37,49 @@ const ServiceSliderComponent = () => {
 
   const services = [
     {
-      title: 'Service One',
-      description: 'Description for service one.',
-      icon: '/icons/service1.svg', // Replace with your icons or images
+      slug: 'wedding-photography',
+      name: 'Wedding Photography',
+      desc: ' Capture the beauty of your special day with our professional wedding photography services.',
     },
     {
-      title: 'Service Two',
-      description: 'Description for service two.',
-      icon: '/icons/service2.svg',
+      slug: 'corporate-videos',
+      name: 'Corporate Videos',
+      desc: 'Showcase your business with high-quality corporate videos that make an impact.',
     },
     {
-      title: 'Service Three',
-      description: 'Description for service three.',
-      icon: '/icons/service3.svg',
+      slug: 'event-coverage',
+      name: 'Event Coverage',
+      desc: 'Document your events with comprehensive photography and videography services.',
     },
     {
-      title: 'Service Four',
-      description: 'Description for service four.',
-      icon: '/icons/service4.svg',
+      slug: 'wedding-photography',
+      name: 'Wedding Photography',
+      desc: ' Capture the beauty of your special day with our professional wedding photography services.',
     },
     {
-      title: 'Service Five',
-      description: 'Description for service five.',
-      icon: '/icons/service5.svg',
+      slug: 'corporate-videos',
+      name: 'Corporate Videos',
+      desc: 'Showcase your business with high-quality corporate videos that make an impact.',
     },
     {
-      title: 'Service Six',
-      description: 'Description for service six.',
-      icon: '/icons/service6.svg',
+      slug: 'event-coverage',
+      name: 'Event Coverage',
+      desc: 'Document your events with comprehensive photography and videography services.',
+    },
+    {
+      slug: 'wedding-photography',
+      name: 'Wedding Photography',
+      desc: ' Capture the beauty of your special day with our professional wedding photography services.',
+    },
+    {
+      slug: 'corporate-videos',
+      name: 'Corporate Videos',
+      desc: 'Showcase your business with high-quality corporate videos that make an impact.',
+    },
+    {
+      slug: 'event-coverage',
+      name: 'Event Coverage',
+      desc: 'Document your events with comprehensive photography and videography services.',
     },
   ];
 
@@ -75,17 +91,26 @@ const ServiceSliderComponent = () => {
             <div
               className="min-w-[100%] md:min-w-[33.3333%] px-4 flex-shrink-0"
               key={index}
+              onClick={() =>
+                router.replace(
+                  {
+                    query: { style: service.slug },
+                  },
+                  undefined,
+                  { shallow: true }
+                )
+              }
             >
               <div className="bg-white rounded-lg shadow p-6 text-center">
                 <Image
-                  src={service.icon}
-                  alt={service.title}
+                  src={service?.icon}
+                  alt={service.name}
                   className="w-16 h-16 mx-auto mb-4"
                   width={1900}
                   height={600}
                 />
-                <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-                <p className="text-gray-600">{service.description}</p>
+                <h3 className="text-xl font-semibold mb-2">{service.name}</h3>
+                <p className="text-gray-600 max">{}</p>
               </div>
             </div>
           ))}

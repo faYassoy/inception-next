@@ -1,50 +1,11 @@
+import { decryptOtp } from '../../../helpers/encryption.helpers';
 import prisma from '../../../lib/db';
 
 export default async function handler(req, res) {
   // =========================>
-  // ## Get All Booking
+  // ## Create Booking
   // =========================>
-  if (req.method === 'GET') {
-    // Get all bookings with optional filtering and searching
-    const { search, filter, paginate, page } = req.query;
-
-    try {
-      const whereClause = {};
-
-      if (search) {
-        whereClause.OR = [
-          { name: { contains: search, mode: 'insensitive' } },
-          { email: { contains: search, mode: 'insensitive' } },
-          { phone_number: { contains: search, mode: 'insensitive' } },
-          { event_name: { contains: search, mode: 'insensitive' } },
-        ];
-      }
-
-      if (filter) {
-        whereClause.status = filter;
-      }
-
-      const totalRow = await prisma.booking.count();
-      const bookings = await prisma.booking.findMany({
-        skip: (parseInt(page) - 1) * parseInt(paginate),
-        take: parseInt(paginate),
-        where: whereClause,
-        orderBy: { created_at: 'desc' },
-      });
-
-      res.status(200).json({
-        massage: 'success',
-        data: bookings,
-        total_row: totalRow,
-      });
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch bookings' });
-    }
-
-    // =========================>
-    // ## Create Booking
-    // =========================>
-  } else if (req.method === 'POST') {
+  if (req.method === 'POST') {
     const {
       name,
       email,
@@ -54,7 +15,7 @@ export default async function handler(req, res) {
       detail,
       style,
       prefix,
-      validNumber,
+      otp,
     } = req.body;
 
     try {
@@ -65,6 +26,8 @@ export default async function handler(req, res) {
         },
       });
 
+      const validOtp = verifyOTP(phone_number, otp);
+
       if (existingBooking) {
         return res.status(422).json({
           massage: `Previous booking from ${
@@ -73,10 +36,10 @@ export default async function handler(req, res) {
           errors: { phone_number: ['Use diffrent phone Number'] },
         });
       }
-      if (!validNumber) {
+      if (!validOtp) {
         return res.status(422).json({
           massage: `${prefix + phone_number} not Valid number`,
-          errors: { phone_number: ['Use diffrent phone Number'] },
+          errors: { otp: ['OTP Invalid'] },
         });
       }
 
@@ -102,5 +65,28 @@ export default async function handler(req, res) {
     }
   } else {
     res.status(405).json({ message: 'Method Not Allowed' });
+  }
+}
+
+async function verifyOTP(phone, inputOtp) {
+  // Find the token from the database
+  const tokenRecord = await prisma.token.findUnique({
+    where: { phone_number: phone },
+  });
+
+  if (!tokenRecord) {
+    throw new Error('Token not found');
+  }
+
+  // Decrypt the stored OTP
+  const decryptedOtp = decryptOtp(tokenRecord.otp);
+
+  // Compare the decrypted OTP with the input
+  if (decryptedOtp === inputOtp) {
+    // OTP matches, verification successful
+    return true;
+  } else {
+    // OTP does not match
+    return false;
   }
 }

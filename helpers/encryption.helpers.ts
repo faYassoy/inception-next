@@ -11,3 +11,16 @@ export function Decrypt(data: any, key = process.env.NEXT_PUBLIC_COOKIE_KEY) {
   let bytes = CryptoJS.AES.decrypt(decData, key).toString(CryptoJS.enc.Utf8);
   return bytes;
 }
+
+const secretKey = 'my_secret_key_32_characters_long'; // Ensure this is secure
+
+// Function to encrypt text (phone number or OTP)
+export function encryptOtp(text: any) {
+  return CryptoJS.AES.encrypt(text, secretKey).toString();
+}
+
+// Function to decrypt text
+export function decryptOtp(cipherText: any) {
+  const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
+  return bytes.toString(CryptoJS.enc.Utf8);
+}

@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { InputComponent, SelectComponent } from '../base.components';
-import { get } from '../../helpers';
+import { get, post } from '../../helpers';
 
-function PhoneValidateComponent({ values, setValues, errors, setErrors }) {
+function PhoneValidateComponent({
+  values,
+  setValues,
+  errors,
+  setErrors,
+  isAdmin,
+}) {
   const [inputPhone, setInputPhone] = useState('');
   const [checkValidate, setCheckValidate] = useState(false);
   const [loadingValidate, setLoadingValidate] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
   const [activeNumber, setActiveNumber] = useState(false);
   const prefix = values.find((val) => val.name == 'prefix')?.value;
 
@@ -44,6 +51,12 @@ function PhoneValidateComponent({ values, setValues, errors, setErrors }) {
         setErrors([
           ...errors?.filter((val) => !['phone_number'].includes(val.name)),
         ]);
+
+        if (!isAdmin) {
+          sendOtp();
+          setCooldown(60);
+        }
+
         setActiveNumber(true);
       } else {
         setErrors([
@@ -57,6 +70,29 @@ function PhoneValidateComponent({ values, setValues, errors, setErrors }) {
       }
     }
   }
+
+  async function sendOtp() {
+    await post({
+      url: 'http://localhost:3001/api/guard',
+      contentType: 'application/json',
+      body: {
+        phone_number: prefix + inputPhone,
+      },
+    });
+  }
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (cooldown > 0) {
+        setCooldown(cooldown - 1);
+      } else {
+        clearInterval(intervalId);
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [cooldown]);
+
   useEffect(() => {
     checkPhone();
 
@@ -85,7 +121,7 @@ function PhoneValidateComponent({ values, setValues, errors, setErrors }) {
         </div>
         <div className="col-span-4">
           <InputComponent
-            type="phone"
+            type="tel"
             name="phone_number"
             label={loadingValidate ? 'No. Hp (cek nomor...)' : 'No. Hp'}
             placeholder="Ex:895396025318"
@@ -95,11 +131,14 @@ function PhoneValidateComponent({ values, setValues, errors, setErrors }) {
             }}
             value={values.find((val) => val.name == 'phone_number')?.value}
             error={errors.find((val) => val.name == 'phone_number')?.error}
+            disabled={cooldown}
           />
           <small className="h-4 text-green-600">
             {!errors.find((val) => val.name == 'phone_number')?.error &&
+              inputPhone.length > 5 &&
               activeNumber &&
               'nomor WhatsApp ditemukan'}
+            {cooldown > 0 && ` (${cooldown})`}
           </small>
         </div>
       </div>
