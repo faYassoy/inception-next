@@ -13,7 +13,6 @@ import moment from 'moment';
 import 'moment/locale/id';
 import { post } from '../../helpers';
 function DaftarBooking() {
-  const { isAuthenticated, isLoading } = useKindeAuth();
   const styleOptions = [
     { label: 'Wedding Photography', value: 'wedding-photography' },
     { label: 'Corporate Videos', value: 'corporate-videos' },
@@ -24,7 +23,8 @@ function DaftarBooking() {
     { label: 'aproved', value: 'aproved' },
     { label: 'done', value: 'done' },
   ];
-  return !isLoading && isAuthenticated ? (
+
+  return (
     <>
       <TableSupervisionComponent
         title="Booking"
