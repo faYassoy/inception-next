@@ -4,8 +4,35 @@ import Link from 'next/link';
 import FormBookingComponent from '../components/construct.components/formBooking.component';
 import ServiceSliderComponent from '../components/construct.components/ServiceSliderComponent';
 import ParallaxGallery from '../components/construct.components/ParallaxGallery';
+import prisma from '../lib/db';
+import StarRating from '../components/construct.components/StarRatingComponent';
 
-export default function Home() {
+export async function getServerSideProps() {
+  const reviews = await prisma.review.findMany({
+    select: {
+      comment: true,
+      booking: {
+        select: {
+          event_name: true,
+          name: true,
+        },
+      },
+    },
+  });
+
+  if (!reviews) {
+    return {
+      notFound: true,
+    };
+  }
+
+  // Mark the review as visited if not already
+  return {
+    props: { reviews },
+  };
+}
+
+export default function Home({ reviews }) {
   return (
     <div>
       {/* Navbar */}
@@ -20,7 +47,7 @@ export default function Home() {
             <Link href="#about">
               <span className="hover:text-red-500 cursor-pointer">ABOUT</span>
             </Link>
-            <Link href="#portfolio" className='hidden md:inline'>
+            <Link href="#portfolio" className="hidden md:inline">
               <span className="hover:text-red-500 cursor-pointer">
                 PORTOFOLIO
               </span>
@@ -28,7 +55,7 @@ export default function Home() {
             <Link href="#services">
               <span className="hover:text-red-500 cursor-pointer">GALLERY</span>
             </Link>
-            <Link href="#testimonials" className='hidden md:inline'>
+            <Link href="#testimonials" className="hidden md:inline">
               <span className="hover:text-red-500 cursor-pointer">
                 TESTIMONIALS
               </span>
@@ -47,10 +74,10 @@ export default function Home() {
       >
         <div className="h-full bg-primary">
           <div className="text-6xl md:text-9xl font-semibold py-14 px-8 space-y-6">
-            <div className='w-fit'>CAPTURE</div>
-            <div className='w-fit'>YOUR</div>
-            <div className='w-fit'>MOMENT</div>
-            <div className='w-fit'>WITH US</div>
+            <div className="w-fit">CAPTURE</div>
+            <div className="w-fit">YOUR</div>
+            <div className="w-fit">MOMENT</div>
+            <div className="w-fit">WITH US</div>
           </div>
         </div>
         <div className=" h-full bg-secondary">
@@ -160,8 +187,28 @@ export default function Home() {
       <section id="testimonials" className="py-16 bg-white">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold mb-12">What Our Clients Say</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3">
-           
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[...reviews,reviews].map((review, key) => {
+              return (
+                <div
+                  key={key}
+                  className="bg-slate-100 shadow-md rounded-lg h-40 p-4 text-left"
+                >
+                  <div className="flex justify-between">
+                    <p className="text-lg font-semibold">
+                      {review.booking?.name}
+                    </p>
+                    <StarRating
+                      ratingValue={review?.rating}
+                      readOnly={true}
+                      size={'xl'}
+                    />
+                  </div>
+                  <hr className="my-1 mb-4  border-2 border-sky-300 " />
+                  <p>{review?.comment}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

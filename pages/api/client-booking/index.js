@@ -71,7 +71,7 @@ export default async function handler(req, res) {
 async function verifyOTP(phone, inputOtp) {
   // Find the token from the database
   const tokenRecord = await prisma.token.findUnique({
-    where: { phone_number: phone },
+    where: { phone_number: phone, is_valid: true },
   });
 
   if (!tokenRecord) {

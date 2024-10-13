@@ -29,9 +29,9 @@ model Booking {
 model Review {
   id         String   @id @default(uuid())
   comment    String
-  is_visited Boolean @default(false)
-  embed_type String?
-  embed_link String?
+  is_visited Boolean  @default(false)
+  published  Boolean  @default(false)
+  rating     Int      @default(0)
   created_at DateTime @default(now())
 
   bookingId String  @unique

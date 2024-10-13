@@ -1,18 +1,24 @@
 import { useKindeAuth } from '@kinde-oss/kinde-auth-nextjs';
-import Link from 'next/link';
+// import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ButtonComponent,
   DateFormatComponent,
+  FloatingPageComponent,
+  FormSupervisionComponent,
   TableSupervisionComponent,
 } from '../../components/base.components';
 import { AdminLayout } from './Admin.layout';
 import PhoneValidateComponent from '../../components/construct.components/PhoneValidate.component';
-import moment from 'moment';
-import 'moment/locale/id';
-import { post } from '../../helpers';
+import DetailBookingPage from '../../components/construct.components/DetailBookingPage';
+import { TextareaComponent } from '../../components/base.components/input/Textarea.component';
+import { faCommentDots } from '@fortawesome/free-solid-svg-icons';
 function DaftarBooking() {
+  const [selected, setSelected] = useState(null);
+  const [reviewModal, setReviewModal] = useState(false);
+  const route = useRouter();
+  const { isAuthenticated, isLoading } = useKindeAuth();
   const styleOptions = [
     { label: 'Wedding Photography', value: 'wedding-photography' },
     { label: 'Corporate Videos', value: 'corporate-videos' },
@@ -23,6 +29,11 @@ function DaftarBooking() {
     { label: 'aproved', value: 'aproved' },
     { label: 'done', value: 'done' },
   ];
+
+  useEffect(() => {
+    !isLoading && !isAuthenticated && route.push('/');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   return (
     <>
@@ -184,89 +195,7 @@ function DaftarBooking() {
           ],
         }}
         customDetail={(data) => {
-          const formatedDate = moment(data?.event_date)
-            .locale('id')
-            .format('dddd, DD MMMM YYYY');
-          // console.log(formatedDate);
-          const message = `*${data.name}*, Kamu telah melakukan booking di inception studio, dengan detail sebagai berikut:\n\n acara: ${data.event_name},\n style: ${data.style},\n pelaksanaan: ${formatedDate}\n\nMimin mau konfirmasi nih apakah detail booking sudah sesuai atau belum.\n\nTerima kasih..`;
-
-          const encodedMessage = encodeURIComponent(message);
-          async function snedWaConfirm(chatId) {
-            const response = await post({
-              url: 'http://localhost:3000/api/sendText',
-              contentType: 'application/json',
-              body: {
-                chatId,
-                text: message,
-                session: 'default',
-              },
-            });
-          }
-          return (
-            <div className="flex flex-col px-8 py-4">
-              <ul className="space-y-2">
-                <li className="grid grid-cols-12">
-                  <b className="col-span-3">Atas Nama</b>
-                  <div className="col-span-9">: {data?.name}</div>
-                </li>
-                <li className="grid grid-cols-12">
-                  <b className="col-span-3">No. Hp</b>
-                  <div className="col-span-9">
-                    :{' '}
-                    <a
-                      className="bg-green-600 text-slate-50 px-4 rounded-full"
-                      target="_blank"
-                      href={`https://wa.me/+6281216174849?text=${encodedMessage}`}
-                      rel="noreferrer"
-                    >
-                      {data?.phone_number}
-                    </a>
-                  </div>
-                </li>
-                <li className="grid grid-cols-12">
-                  <b className="col-span-3">Email</b>
-                  <div className="col-span-9">: {data?.email}</div>
-                </li>
-                <li className="grid grid-cols-12">
-                  <b className="col-span-3">Acara</b>
-                  <div className="col-span-9">: {data?.event_name}</div>
-                </li>
-                <li className="grid grid-cols-12">
-                  <b className="col-span-3">Pelaksanaan</b>
-                  <div className="col-span-9">: {data?.event_date}</div>
-                </li>
-                <li className="grid grid-cols-12">
-                  <b className="col-span-3">Status</b>
-                  <div className="col-span-9">
-                    :{' '}
-                    <span
-                      className={`${
-                        data?.status == 'done' ? 'bg-primary' : 'bg-slate-400'
-                      } text-slate-50 px-4 rounded-full`}
-                    >
-                      {data?.status}
-                    </span>
-                  </div>
-                </li>
-                <li>
-                  <b className="block w-full pb-2">Detail : </b>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: data?.detail?.replace(/\n/g, '<br>'),
-                    }}
-                    className="max-h-[30vh] overflow-y-scroll scroll_control px-3 py-4 bg-slate-100 rounded-lg"
-                  ></div>
-                </li>
-              </ul>
-              <div className="w-full flex justify-center mt-10">
-                <ButtonComponent
-                  label="Konfirmasi Booking"
-                  paint="success"
-                  onClick={() => snedWaConfirm(data.phone_number)}
-                />
-              </div>
-            </div>
-          );
+          return <DetailBookingPage data={data} />;
         }}
         formUpdateControl={{
           customDefaultValue: (data) => {
@@ -365,20 +294,87 @@ function DaftarBooking() {
             },
           ],
         }}
+        actionControl={{
+          include: (data) => {
+            return (
+              <>
+                <ButtonComponent
+                  label="Ulasan"
+                  icon={faCommentDots}
+                  variant="outline"
+                  rounded
+                  size="sm"
+                  onClick={() => {
+                    setReviewModal(true);
+                    setSelected(data);
+                  }}
+                />
+              </>
+            );
+          },
+        }}
       />
-    </>
-  ) : (
-    <div className="flex flex-col items-center justify-center gap-8 p-5">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/500.svg" width={'350px'} alt="server error" />
-      <h1 className="text-2xl font-bold">Server Disconnect</h1>
-      <Link
-        className="bg-emerald-100 hover:bg-emerald-300 text-emerald-600 border-4 border-emerald-600 font-semibold px-6 py-4 rounded-full"
-        href="/admin"
+      <FloatingPageComponent
+        title={`Ulasan Event ${selected?.event_name}`}
+        show={reviewModal}
+        onClose={() => {
+          setSelected(null);
+          setReviewModal(false);
+        }}
       >
-        Kembali Ke Halaman Login
-      </Link>
-    </div>
+        <div className="px-6 pt-4 pb-20 h-full overflow-scroll scroll_control">
+          <FormSupervisionComponent
+            // title="Buat Ulasan"
+            submitControl={{ path: 'client-review' }}
+            confirmation={true}
+            defaultValue={{
+              id: selected?.Review?.at(0)?.id,
+              comment: selected?.Review?.at(0)?.comment,
+              publish: selected?.Review?.at(0)?.publish,
+              is_visited: selected?.Review?.at(0)?.is_visited,
+            }}
+            forms={[
+              {
+                type: 'check',
+                construction: {
+                  name: 'publish',
+                  label: '',
+                  options: [
+                    { label: 'Tampilkan di halaman utama', value: true },
+                  ],
+                  validations: { required: true },
+                },
+              },
+              {
+                type: 'radio',
+                construction: {
+                  name: 'is_visited',
+                  label: 'Status Link Ulasan',
+                  options: [
+                    { label: 'Aktif', value: false },
+                    { label: 'Tidak Aktif', value: true },
+                  ],
+                  validations: { required: true },
+                },
+              },
+              {
+                type: 'custom',
+                custom: ({ formControl }) => (
+                  <TextareaComponent
+                    name="comment"
+                    label="Ulasan"
+                    placeholder="Tuliskan ulasanmu tentang palayayan kami..."
+                    rows={12}
+                    disabled={true}
+                    {...formControl('comment')}
+                  />
+                ),
+              },
+            ]}
+          />
+        </div>
+      </FloatingPageComponent>
+    </>
   );
 }
 

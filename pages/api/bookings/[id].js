@@ -25,7 +25,7 @@ export default async function handler(req, res) {
       event_name,
       event_date,
       style,
-      details,
+      detail,
       status,
       _method,
     } = req.body;
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
     }
     try {
       const updatedBooking = await prisma.booking.update({
-        where: { id: parseInt(id) },
+        where: { id: id },
         data: {
           name,
           email,
@@ -42,20 +42,31 @@ export default async function handler(req, res) {
           event_name,
           event_date: new Date(event_date),
           style,
-          details,
+          detail,
           status,
         },
       });
-
+      // await prisma.token.update({
+      //   where: { phone_number: phone_number },
+      //   data: {
+      //     is_valid: false,
+      //   },
+      // });
+      if (status == 'done') {
+        const reviewExist = await prisma.review.findUnique({
+          where: { bookingId: id },
+        });
+        !reviewExist && (await createReview(id));
+      }
       res.status(200).json(updatedBooking);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to update booking' });
+      res.status(500).json({ error: error.message });
     }
   } else if (req.method === 'DELETE') {
     // Delete a booking
     try {
       await prisma.booking.delete({
-        where: { id: parseInt(id) },
+        where: { id: id },
       });
 
       res.status(200).json({ message: 'Customer deleted successfully' });
@@ -65,4 +76,10 @@ export default async function handler(req, res) {
   } else {
     res.status(405).json({ message: 'Method Not Allowed' });
   }
+}
+
+async function createReview(id) {
+  await prisma.review.create({
+    data: { bookingId: id, created_at: new Date(), comment: '' },
+  });
 }

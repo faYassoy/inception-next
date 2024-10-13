@@ -13,10 +13,12 @@ export default async function handler(req, res) {
 
       if (search) {
         whereClause.OR = [
-          { name: { contains: search, mode: 'insensitive' } },
-          { email: { contains: search, mode: 'insensitive' } },
-          { phone_number: { contains: search, mode: 'insensitive' } },
-          { event_name: { contains: search, mode: 'insensitive' } },
+          { name: { contains: search } },
+          { email: { contains: search } },
+          { phone_number: { contains: search } },
+          { event_name: { contains: search } },
+          { style: { contains: search } },
+          { status: { contains: search } },
         ];
       }
 
@@ -29,6 +31,7 @@ export default async function handler(req, res) {
         skip: (parseInt(page) - 1) * parseInt(paginate),
         take: parseInt(paginate),
         where: whereClause,
+        include: { Review: true },
         orderBy: { created_at: 'desc' },
       });
 
@@ -38,7 +41,7 @@ export default async function handler(req, res) {
         total_row: totalRow,
       });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch bookings' });
+      res.status(500).json({ error: error.message });
     }
 
     // =========================>
